@@ -1,0 +1,21 @@
+.home-page-container{
+    display: flex;
+    justify-content: center;
+}
+
+.nav-links{
+    display: flex;
+    justify-content: center;
+}
+
+.nav-links p{
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+
+.nav-links p:hover{
+    color: grey;
+}

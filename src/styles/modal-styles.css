@@ -1,0 +1,30 @@
+.modal-container {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    background: rgba(0, 0, 0, .8);
+    display: flex;
+    justify-content: center;
+}
+
+.modal-content {
+    background: silver;
+    padding: 2rem;
+    margin: 2rem 0 0 0;
+    height: 150px;
+}
+
+.userExists {
+    color: green;
+}
+
+.userDoesntExists {
+    color: red;
+}
+
+.submit-button {
+    width: 100%;
+}

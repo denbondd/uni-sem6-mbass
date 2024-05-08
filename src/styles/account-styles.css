@@ -1,0 +1,50 @@
+.account-container{
+    display: flex;
+    justify-content: center;
+}
+
+.account-content {
+    min-width: 900px;
+}
+
+.user-info{
+    display: flex;
+    justify-content: space-between;
+}
+
+.user-info-avatar{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.submit-logout{
+    margin: .5rem 0 0 0;
+    padding: .5rem;
+}
+
+.upload-file-form{
+    margin: 2rem 0 0 0;
+}
+
+.user-files{
+    margin: 2rem 0 0 0;
+}
+
+.user-file-list{
+    margin: 1rem 0 0 0;
+    padding: 0 1rem 0 1rem;
+    border: 1px solid black;
+}
+
+.file-container{
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid black;
+    padding: .25rem;
+    margin: 1rem 0 1rem 0;
+}
+
+.file-name{
+    display: inline-block;
+}

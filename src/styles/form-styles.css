@@ -1,0 +1,56 @@
+.form-container{
+    display: flex;
+    justify-content: center;
+}
+
+.form{
+    background: rgb(201, 201, 201);
+    padding: 1rem;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.form-content p{
+    display: inline-block;
+    flex: 1;
+}
+
+.form-content input {
+    display: inline-block;
+    height: 1.25rem;;
+}
+
+.submit{
+    display: flex;
+    justify-content: center;
+}
+
+.submit button{
+    margin: .5rem 0 0 0;
+    padding: .5rem;
+}
+
+.login-links{
+    display: flex;
+    justify-content: center;
+    margin: .5rem 0 0 0;
+}
+
+.login-links p{
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    text-decoration: none;
+}
+
+.login-links p:hover{
+    color: grey;
+}
+
+.show-pass-title{
+    display: inline-block;
+}
