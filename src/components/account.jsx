@@ -13,12 +13,14 @@ function Account() {
 
     const [user, setUser] = useState({})
     const [file, setFile] = useState()
-    const [avatar, setAvatar] = useState('')
+    const [avatar, setAvatar] = useState()
+    const [newAvatar, setNewAvatar] = useState()
     const [avatarURL, setAvatarURL] = useState({})
     const [userFiles, setUserFiles] = useState([])
     const [fileURL, setFileURL] = useState('')
     const [modalIsActive, setModalIsActive] = useState(false)
     const [fileForShare, setFileForShare] = useState({})
+    const [geo, setGeo] = useState({longitude: 0, latitude: 0})
 
     const navigate = useNavigate()
 
@@ -28,6 +30,49 @@ function Account() {
         } catch(err) {
             console.error(err)
         }
+    }
+
+    const editProfile = () => {
+        navigate('/edit-profile', { replace: true })
+    }
+
+    const getGeo = async () => {
+        const newGeo = {}
+        navigator.geolocation.getCurrentPosition(position => {
+            Backendless.Data.of('Users').save({
+                objectId: user.objectId,
+                my_location: {
+                    "type": "Point",
+                    "coordinates": [
+                        position.coords.longitude,
+                        position.coords.latitude
+                    ]
+                }
+
+            })
+            newGeo.longitude = position.coords.longitude
+            newGeo.latitude = position.coords.latitude
+            setGeo(newGeo)
+        })
+
+        // console.log(geo)
+        // try {
+        //     await Backendless.Data.of('Users').save({
+        //         objectId: user.objectId,
+        //         my_location: {
+        //             "type": "Point",
+        //             "coordinates": [
+        //                 geo.longitude,
+        //                 geo.latitude
+        //             ]
+        //         }
+        //
+        //     })
+        //     alert('Your account data was updated')
+        //     navigate('/account', { replace: true })
+        // } catch(err) {
+        //     console.log(err)
+        // }
     }
 
     const LogOut = async () => {
@@ -41,7 +86,6 @@ function Account() {
 
     const uploadFile = async () => {
         try{
-
             const URL = await Backendless.Files.upload(file, user.name, true)
             alert('Your file was uploaded')
         } catch(err) {
@@ -51,11 +95,11 @@ function Account() {
 
     const uploadAvatar = async () => {
         try {
-
-            const URL = await Backendless.Files.upload(avatar, `${user.name}/avatar`, true)
+            console.log(newAvatar)
+            await Backendless.Files.remove(avatar)
+            const URL = await Backendless.Files.upload(newAvatar, `${user.name}/avatar`, true)
             setAvatarURL(URL)
             alert('Your avatar was uploaded')
-            console.log(URL)
         } catch(err) {
             console.log(err)
         }
@@ -117,6 +161,10 @@ function Account() {
         const fetchData = async () => {
             await getUser()
             await getAvatar()
+            setInterval(async () => {
+                await getGeo()
+
+            }, 60000)
         }
 
         fetchData()
@@ -131,12 +179,18 @@ function Account() {
                         <div className="">
                             <div className="user-info">
                                 <div className="user-info-title">
+                                    <p>{user.name}</p>
                                     <p>{user.email}</p>
                                     <p>{user.country}</p>
+                                    <button onClick={editProfile}>Edit profile</button>
+                                    <p>Longitude: {geo.longitude}</p>
+                                    <p>Latitude: {geo.latitude}</p>
+                                    <button onClick={getGeo}>Get My Geolocation</button><br />
+                                    <button onClick={() => navigate('/geolocation', { replace: true })}>Geolocation</button>
                                 </div>
                                 <div className="user-info-avatar">
                                     <img src={avatar} alt="avatar" width="35px" height="35px"/>
-                                    <input type="file" onChange={event => setAvatar(event.target.files[0])}/>
+                                    <input type="file" onChange={event => setNewAvatar(event.target.files[0])}/>
                                     <button onClick={uploadAvatar}>Choose avatar</button>
                                 </div>
                             </div>
