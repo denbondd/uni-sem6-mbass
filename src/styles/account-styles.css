@@ -48,3 +48,23 @@
 .file-name{
     display: inline-block;
 }
+
+.friends {
+    margin: 1rem 0 0 0;
+}
+
+.friends-title {
+    display: inline-block;
+}
+
+.friends-buttons {
+    margin: 1rem 0 0 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.friend-list-item {
+    border: 1px solid black;
+    padding: .25rem;
+    margin: 1rem 0 1rem 0;
+}

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { useNavigate } from 'react-router-dom';
 import '../styles/account-styles.css';
 import Backendless from "backendless";
 import axios from 'axios';
 import fileDownload from "js-file-download";
 import ModalWindow from "./modal-window";
+import loginForm from "./login-form";
 
 function Account() {
 
@@ -21,12 +22,17 @@ function Account() {
     const [modalIsActive, setModalIsActive] = useState(false)
     const [fileForShare, setFileForShare] = useState({})
     const [geo, setGeo] = useState({longitude: 0, latitude: 0})
+    const [friendName, setFriendName] = useState('')
+    const [friends, setFriends] = useState([])
+    const [friendsRequests, setFriendsRequests] = useState([])
+    const [allFriends, setAllFriends] = useState([])
 
     const navigate = useNavigate()
 
     const getUser = async () => {
         try{
-            setUser(await Backendless.UserService.getCurrentUser())
+            const userData = await Backendless.UserService.getCurrentUser()
+            setUser(userData)
         } catch(err) {
             console.error(err)
         }
@@ -89,6 +95,8 @@ function Account() {
             const URL = await Backendless.Files.upload(file, user.name, true)
             alert('Your file was uploaded')
         } catch(err) {
+            Backendless.Logging.setLogReportingPolicy( 1, 1 )
+            Backendless.Logging.getLogger('file-upload-logger').error(err.message)
             console.error(err)
         }
     }
@@ -157,6 +165,52 @@ function Account() {
         setFileForShare({fileURL, fileName})
     }
 
+    const addFriend = async () => {
+        try {
+            const whereClause = `name = '${friendName}'`
+            const queryBuilder = Backendless.DataQueryBuilder.create().setWhereClause(whereClause)
+            const friend = await Backendless.Data.of('Users').find(queryBuilder)
+            const friendData = [...allFriends]
+            friendData.push({
+                "name": friend[0].name,
+                "status": "holding",
+                "friendId": friend[0].objectId
+            })
+            await Backendless.Data.of('Users').save({
+                objectId: user.objectId,
+                friends: friendData
+            })
+            alert('Friend was added')
+            setFriendName('')
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    const getFriendsRequests = async () => {
+        try {
+            const whereClause = `friends->'$.friendId'='${user.objectId}'`
+            const queryBuilder = Backendless.DataQueryBuilder.create()
+            queryBuilder.addProperty(whereClause)
+            const data = await Backendless.Data.of('Users').find(queryBuilder)
+            setFriendsRequests(data)
+            console.log(data)
+            console.log(friendsRequests)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    const getAllFriends = async () => {
+        try {
+            const friends = user.friends ? [...user.friends] : []
+            setAllFriends(friends)
+            // await getFriendsRequests()
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     useEffect( () => {
         const fetchData = async () => {
             await getUser()
@@ -184,14 +238,48 @@ function Account() {
                                     <p>{user.country}</p>
                                     <button onClick={editProfile}>Edit profile</button>
                                     <p>Longitude: {geo.longitude}</p>
-                                    <p>Latitude: {geo.latitude}</p>
-                                    <button onClick={getGeo}>Get My Geolocation</button><br />
-                                    <button onClick={() => navigate('/geolocation', { replace: true })}>Geolocation</button>
+                                    <p>Latitude: {geo.latitude}</p><br />
+                                    <button onClick={getGeo}>Get My Geolocation</button><br /><br />
+                                    <button onClick={() => navigate('/geolocation', { replace: true })}>Geolocation</button><br /><br />
+                                    <button onClick={() => navigate('/feedback', { replace: true })}>Feedback</button>
                                 </div>
-                                <div className="user-info-avatar">
-                                    <img src={avatar} alt="avatar" width="35px" height="35px"/>
-                                    <input type="file" onChange={event => setNewAvatar(event.target.files[0])}/>
-                                    <button onClick={uploadAvatar}>Choose avatar</button>
+                                <div className="">
+                                    <div className="user-info-avatar">
+                                        <img src={avatar} alt="avatar" width="35px" height="35px"/>
+                                        <input type="file" onChange={event => setNewAvatar(event.target.files[0])}/>
+                                        <button onClick={uploadAvatar}>Choose avatar</button>
+                                    </div>
+                                    <div className="friends">
+                                        <p className="friends-title">Username: </p>
+                                        <input type="text" onChange={event => setFriendName(event.target.value)}/>
+                                        <div className="friends-buttons">
+                                            <button onClick={getAllFriends}>Get</button>
+                                            <button onClick={addFriend}>Add</button>
+                                            <button>Find</button>
+                                            <button>Delete</button>
+                                        </div>
+                                        <div className="friend-list">
+                                            {allFriends.length !== 0 ?
+                                                allFriends.map((friend, index) => {
+                                                    return(
+                                                        <div className="friend-list-item" key={index}>
+                                                            <p>Name: {friend.name}</p>
+                                                            <p>{friend.status}</p>
+                                                        </div>
+                                                    )
+                                                })
+                                                :
+                                                friendsRequests.map((friend, index) => {
+                                                    return(
+                                                        <div className="friend-list-item" key={index}>
+                                                            <p>Name: {friend.name}</p>
+                                                            <button>Accept</button>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <button onClick={LogOut} className="submit-logout">Log out</button><br />

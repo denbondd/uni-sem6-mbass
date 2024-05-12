@@ -18,8 +18,6 @@ function Geolocation() {
     const [description, setDescription] = useState('')
     const [longitude, setLongitude] = useState('')
     const [latitude, setLatitude] = useState('')
-    // const [likes, setLikes] = useState(0)
-    // const [isOwn, setIsOwn] = useState(false)
     const [position, setPosition] = useState({ coordinates: [0, 0], zoom: 1 });
 
     function handleZoomIn() {
@@ -70,6 +68,8 @@ function Geolocation() {
             setLongitude('')
             setLatitude('')
         } catch(err) {
+            Backendless.Logging.setLogReportingPolicy( 1, 1 );
+            Backendless.Logging.getLogger('add-geo-place').error(err.message)
             console.log(err)
         }
     }

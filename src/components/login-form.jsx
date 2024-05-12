@@ -18,7 +18,9 @@ function LoginForm() {
             await Backendless.UserService.login(name, password, true)
             navigate('/account', { replace: true })
         } catch(err) {
-            console.log(err)
+            Backendless.Logging.setLogReportingPolicy( 1, 1 )
+            Backendless.Logging.getLogger('auth-logger').error(`${err.message}, user try enter: name - ${name}, password - ${password}`)
+            console.error(err)
             alert(err)
         }
     }

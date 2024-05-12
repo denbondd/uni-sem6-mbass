@@ -2,15 +2,6 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
-
-In the root directory, create .env file with next lines:
-
-REACT_APP_ID = E06F1743-BEBA-ADA7-FFE9-8A8246000300
-
-REACT_APP_API_KEY = 9BD87F51-4F5C-47AC-84DA-9D0CA108F106
-
-REACT_APP_CUSTOM_DOMAIN = https://legalmachine.backendless.app
 
 In the project directory, you can run:
 

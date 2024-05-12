@@ -6,6 +6,7 @@
 .form{
     background: rgb(201, 201, 201);
     padding: 1rem;
+    min-width: 150px;
 }
 
 .form-content {
